@@ -1,0 +1,604 @@
+/* ==========================================================================
+   Market Steward — Animated layer
+   Backdrop · dot field · spotlight · shine · scroll progress
+
+   Portions adapted from ReactBits (github.com/DavidHDev/react-bits, MIT):
+   the dot field, spotlight card, shiny text and blur text techniques are
+   reimplemented here in the brand palette with no third-party runtime.
+   ========================================================================== */
+
+/* -------------------------------------------------------------- Backdrop */
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* A Backdrop is a positioned element with z-index 0, so it would paint
+   above the section's normal in-flow content. Lift every sibling so a
+   section can take a Backdrop without auditing its own children. */
+.section > *:not(.backdrop),
+.page-head > *:not(.backdrop),
+.hero > *:not(.backdrop),
+.cta-band > *:not(.backdrop) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Every layer inside a backdrop is decorative; only the layer itself is
+   announced, and it is hidden from assistive tech by the component. */
+.backdrop > * {
+  position: absolute;
+  inset: 0;
+}
+
+/* --- Layer 1: base tint + drifting aurora mesh ------------------------ */
+
+.backdrop__base {
+  background: linear-gradient(180deg, var(--ms-green-50) 0%, var(--c-canvas) 62%);
+}
+
+.backdrop--inverse .backdrop__base {
+  background: linear-gradient(180deg, var(--ms-green-950) 0%, var(--ms-green-900) 100%);
+}
+
+.backdrop__mesh {
+  overflow: hidden;
+}
+
+/* Large, very soft, and independently drifting. Overlapping three of them
+   reads as depth; a single one reads as a gradient. */
+.backdrop__blob {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  filter: blur(70px);
+  will-change: transform;
+}
+
+.backdrop__blob--1 {
+  top: -22%;
+  left: -8%;
+  width: 46%;
+  height: 58%;
+  background: radial-gradient(circle, rgb(143 189 166 / 0.55) 0%, transparent 70%);
+  animation: blob-drift-a 38s var(--ease-in-out) infinite alternate;
+}
+
+.backdrop__blob--2 {
+  top: 6%;
+  right: -10%;
+  width: 40%;
+  height: 52%;
+  background: radial-gradient(circle, rgb(54 118 90 / 0.34) 0%, transparent 70%);
+  animation: blob-drift-b 46s var(--ease-in-out) infinite alternate;
+}
+
+.backdrop__blob--3 {
+  bottom: -28%;
+  left: 26%;
+  width: 44%;
+  height: 50%;
+  background: radial-gradient(circle, rgb(189 187 187 / 0.4) 0%, transparent 72%);
+  animation: blob-drift-c 42s var(--ease-in-out) infinite alternate;
+}
+
+.backdrop--inverse .backdrop__blob {
+  filter: blur(90px);
+}
+
+.backdrop--inverse .backdrop__blob--1 {
+  background: radial-gradient(circle, rgb(54 118 90 / 0.5) 0%, transparent 70%);
+}
+
+.backdrop--inverse .backdrop__blob--2 {
+  background: radial-gradient(circle, rgb(39 90 68 / 0.6) 0%, transparent 70%);
+}
+
+.backdrop--inverse .backdrop__blob--3 {
+  background: radial-gradient(circle, rgb(143 189 166 / 0.2) 0%, transparent 72%);
+}
+
+@keyframes blob-drift-a {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(9%, 7%, 0) scale(1.14);
+  }
+}
+
+@keyframes blob-drift-b {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1.08);
+  }
+  100% {
+    transform: translate3d(-11%, 9%, 0) scale(0.94);
+  }
+}
+
+@keyframes blob-drift-c {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.96);
+  }
+  100% {
+    transform: translate3d(7%, -10%, 0) scale(1.12);
+  }
+}
+
+/* --- Layer 2: masked grid lines -------------------------------------- */
+
+.backdrop__grid {
+  color: var(--ms-green-700);
+  opacity: 0.22;
+}
+
+.grid-pattern path {
+  stroke: currentColor;
+  stroke-width: 1;
+}
+
+/* Fade the grid toward the edges so it never reads as a spreadsheet. The
+   stop has to sit well outside the viewport, otherwise the falloff itself
+   becomes a visible arc across the hero. */
+.backdrop__grid {
+  mask-image: radial-gradient(150% 120% at 50% 0%, #000 0%, transparent 62%);
+}
+
+.backdrop--inverse .backdrop__grid {
+  color: var(--ms-green-300);
+  opacity: 0.16;
+}
+
+/* --- Layer 3: conic sweep -------------------------------------------- */
+
+.backdrop__sweep {
+  opacity: 0.55;
+  background: conic-gradient(
+    from 210deg at 62% 34%,
+    transparent 0deg,
+    rgb(194 221 208 / 0.5) 58deg,
+    transparent 128deg,
+    rgb(189 187 187 / 0.35) 214deg,
+    transparent 292deg
+  );
+  animation: conic-turn 60s linear infinite;
+}
+
+.backdrop--inverse .backdrop__sweep {
+  opacity: 0.4;
+  background: conic-gradient(
+    from 210deg at 62% 34%,
+    transparent 0deg,
+    rgb(54 118 90 / 0.5) 58deg,
+    transparent 128deg,
+    rgb(143 189 166 / 0.22) 214deg,
+    transparent 292deg
+  );
+}
+
+@keyframes conic-turn {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* --- Layer 4: grain -------------------------------------------------- */
+
+.backdrop__grain {
+  opacity: 0.4;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.2'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+.backdrop--inverse .backdrop__grain {
+  opacity: 0.22;
+  mix-blend-mode: screen;
+}
+
+/* --- Sheen for dark sections -------------------------------------------- */
+
+.backdrop__sheen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 32%,
+    rgb(255 255 255 / 0.07) 48%,
+    rgb(255 255 255 / 0.11) 50%,
+    rgb(255 255 255 / 0.07) 52%,
+    transparent 68%
+  );
+  background-size: 260% 100%;
+  animation: sheen-sweep 11s var(--ease-in-out) infinite;
+  will-change: background-position;
+}
+
+@keyframes sheen-sweep {
+  0% {
+    background-position: 190% 0;
+  }
+  55%,
+  100% {
+    background-position: -90% 0;
+  }
+}
+
+/* -------------------------------------------------------------- Spotlight */
+
+.spotlight {
+  position: relative;
+  isolation: isolate;
+  --spotlight-x: 50%;
+  --spotlight-y: 50%;
+  --spotlight-color: rgb(27 67 50 / 0.1);
+  --spotlight-radius: 190px;
+}
+
+.spotlight::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    var(--spotlight-radius) circle at var(--spotlight-x) var(--spotlight-y),
+    var(--spotlight-color),
+    transparent 72%
+  );
+  opacity: 0;
+  transition: opacity var(--t-slow) var(--ease-out);
+  pointer-events: none;
+}
+
+.spotlight:hover::before,
+.spotlight:focus-within::before {
+  opacity: 1;
+}
+
+/* -------------------------------------------------------------- Shiny text */
+
+.shiny-text {
+  /* Reserve a paint layer so the gradient sweep does not repaint the
+     whole section on every frame. */
+  will-change: background-position;
+}
+
+/* -------------------------------------------------------------- Blur text */
+
+.blur-text {
+  will-change: transform, filter, opacity;
+}
+
+/* -------------------------------------------------------------- Progress */
+
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: calc(var(--z-nav) + 20);
+  background: linear-gradient(90deg, var(--ms-green-700), var(--ms-green-400));
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+/* -------------------------------------------------------------- Shimmer */
+
+/* A single highlight pass across the primary CTA. Slow and low-contrast:
+   faster or brighter reads as a gaming UI. */
+.btn--shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn--shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -60%;
+  width: 45%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgb(255 255 255 / 0.28) 50%,
+    transparent 100%
+  );
+  transform: skewX(-18deg);
+  pointer-events: none;
+  animation: shimmer-pass 4.6s var(--ease-in-out) infinite;
+}
+
+@keyframes shimmer-pass {
+  0%,
+  62% {
+    left: -60%;
+  }
+  100% {
+    left: 130%;
+  }
+}
+
+/* -------------------------------------------------------------- Live badge */
+
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--r-pill);
+  border: 1px solid;
+  font-size: var(--fs-3xs);
+  font-weight: 700;
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.live--sm {
+  padding: 0.1875rem 0.5rem;
+  font-size: var(--fs-3xs);
+}
+
+.live--live {
+  background: rgb(39 90 68 / 0.1);
+  border-color: rgb(54 118 90 / 0.32);
+  color: #1b4332;
+}
+
+.live--stale {
+  background: var(--c-warn-soft);
+  border-color: rgb(138 106 31 / 0.34);
+  color: var(--c-warn);
+}
+
+.live--connecting {
+  background: var(--c-surface-sunken);
+  border-color: var(--c-border-strong);
+  color: var(--c-ink-subtle);
+}
+
+/* On the dark tape the live state needs an inverted treatment. */
+.tape .live--live {
+  background: rgb(143 189 166 / 0.14);
+  border-color: rgb(143 189 166 / 0.3);
+  color: var(--ms-green-200);
+}
+
+.hero-panel .live--live {
+  background: rgb(143 189 166 / 0.12);
+  border-color: rgb(143 189 166 / 0.28);
+  color: var(--ms-green-200);
+}
+
+.hero-panel .live--stale {
+  background: rgb(196 148 46 / 0.14);
+  border-color: rgb(196 148 46 / 0.32);
+  color: #e2b25c;
+}
+
+.live__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.live--live .live__label::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentcolor;
+  animation: live-pulse 2.4s var(--ease-in-out) infinite;
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.live__source,
+.live__time {
+  font-weight: 500;
+  letter-spacing: var(--ls-wide);
+  opacity: 0.72;
+}
+
+/* -------------------------------------------------------------- Data notice */
+
+.data-notice {
+  display: grid;
+  gap: var(--sp-3);
+}
+
+.data-notice__title {
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  letter-spacing: var(--ls-widest);
+  text-transform: uppercase;
+  color: var(--c-primary);
+}
+
+.data-notice__list {
+  display: grid;
+  gap: var(--sp-3);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-relaxed);
+  color: var(--c-ink-muted);
+}
+
+.data-notice__list strong {
+  color: var(--c-ink);
+  font-weight: 700;
+}
+
+/* -------------------------------------------------------------- Chart shell */
+
+.chart__empty {
+  display: grid;
+  place-items: center;
+  min-height: 7rem;
+  padding: var(--sp-6);
+  border: 1px dashed var(--c-border-strong);
+  border-radius: var(--r-md);
+  font-size: var(--fs-xs);
+  color: var(--c-ink-subtle);
+  text-align: center;
+}
+
+/* -------------------------------------------------------------- Market tape */
+
+/* Sits directly under the nav on every page. Dark, dense, monospaced —
+   the visual grammar of a trading terminal rather than a brochure. */
+.tape {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  height: 2.25rem;
+  padding-inline: var(--sp-4);
+  background: var(--ms-green-950);
+  color: rgb(255 255 255 / 0.72);
+  border-bottom: 1px solid rgb(255 255 255 / 0.08);
+  overflow: hidden;
+}
+
+.tape__flag {
+  display: none;
+}
+
+.tape__waiting {
+  font-size: var(--fs-3xs);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.45);
+}
+
+.tape__scroll {
+  flex: 1;
+  min-width: 0;
+  /* The tape owns its own mask; Marquee's default fade is too wide here. */
+  --marquee-fade: 0;
+}
+
+.tape__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+  font-size: var(--fs-2xs);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tape__sym {
+  font-weight: 700;
+  letter-spacing: var(--ls-wide);
+  color: var(--c-ink-inverse);
+}
+
+.tape__last {
+  color: rgb(255 255 255 / 0.8);
+}
+
+.tape__spark {
+  opacity: 0.75;
+}
+
+.tape .delta {
+  font-size: var(--fs-3xs);
+}
+
+/* -------------------------------------------------------------- Border beam */
+
+/* Registered so the conic angle interpolates smoothly. Without this the
+   angle snaps between keyframes and the sweep stutters. */
+@property --beam-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* Gradient-border trick: paint a conic gradient, then mask out the centre
+   with `mask-composite: exclude` so only a ring of the element survives. */
+.marquee {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+/* Full-bleed contexts (the market tape) opt out of the edge fade. */
+.tape .marquee {
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+.marquee__track {
+  display: flex;
+  width: max-content;
+  animation: marquee-slide var(--marquee-duration, 42s) linear infinite;
+}
+
+.marquee[data-pause='true']:hover .marquee__track {
+  animation-play-state: paused;
+}
+
+.marquee__group {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  padding-right: var(--sp-8);
+  flex: none;
+}
+
+@keyframes marquee-slide {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+/* -------------------------------------------------------------- Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop__blob,
+  .backdrop__sweep,
+  .backdrop__sheen,
+  .marquee__track,
+  .btn--shimmer::after {
+    animation: none;
+  }
+
+  .marquee__track {
+    transform: translate3d(0, 0, 0);
+  }
+
+  .marquee__group:nth-of-type(2) {
+    display: none;
+  }
+
+  /* Keep the static depth layers so the section does not flatten. */
+  .backdrop__sheen {
+    opacity: 0.4;
+  }
+
+  .backdrop__grid {
+    opacity: 0.35;
+  }
+}

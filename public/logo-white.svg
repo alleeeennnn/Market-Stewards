@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 200" role="img" aria-label="Market Stewards">
+  <title>Market Stewards</title>
+  <!-- White wordmark: for dark grounds (hero, footer on deep green). -->
+  <g fill="#FFFFFF" font-family="Montserrat, Inter, Arial, sans-serif" font-weight="700" letter-spacing="6">
+    <text x="320" y="78" text-anchor="middle" font-size="56">MARKET</text>
+    <text x="320" y="132" text-anchor="middle" font-size="44">STEWARDS</text>
+  </g>
+  <g stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+    <line x1="60" y1="162" x2="290" y2="162" />
+    <line x1="350" y1="162" x2="580" y2="162" />
+  </g>
+  <g fill="#FFFFFF">
+    <path d="M317 140 C308 138 303 131 303 122 C311 125 315 131 315.5 138 Z" />
+    <path d="M322 143 C329 142 334 138 336 132 C330 133 325 136 323.5 140 Z" />
+    <path d="M320 152 C320 146 318.5 142.5 315 140.5" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" />
+    <circle cx="320" cy="158" r="6" />
+  </g>
+</svg>
