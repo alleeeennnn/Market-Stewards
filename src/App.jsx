@@ -22,7 +22,7 @@ function RouteFallback() {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/Market-Stewards/">
       <Suspense fallback={<RouteFallback />}>
         <Routes>
           <Route element={<RootLayout />}>
