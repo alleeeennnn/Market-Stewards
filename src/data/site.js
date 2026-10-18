@@ -13,8 +13,8 @@ export const BRAND = {
     'To raise financially wise, disciplined, and purpose-driven Filipino traders who honor God with their resources and transform their families, communities, and future generations.',
   summary:
     'Market Stewards helps people understand finance, trading, and wealth-building through structured education and consultancy.',
-  logo: '/logo.svg',
-  logoWhite: '/logo-white.svg',
+  logo: '/Market-Stewards/logo.svg',
+  logoWhite: '/Market-Stewards/logo-white.svg',
   email: 'hello@marketstewards.ph',
   supportEmail: 'support@marketstewards.ph',
   location: 'Makati City, Metro Manila, Philippines',

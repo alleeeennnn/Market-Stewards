@@ -124,12 +124,12 @@ export function HomePage() {
           loop
           playsInline
           preload="auto"
-          poster="/art/hero-noir.jpg"
+          poster="/Market-Stewards/art/hero-noir.jpg"
           aria-hidden="true"
           tabIndex={-1}
         >
-          <source src="/art/hero-loop.webm" type="video/webm" />
-          <source src="/art/hero-loop.mp4" type="video/mp4" />
+          <source src="/Market-Stewards/art/hero-loop.webm" type="video/webm" />
+          <source src="/Market-Stewards/art/hero-loop.mp4" type="video/mp4" />
         </video>
         <div className="hero__plate" data-higgsfield-slot="hero-plate" aria-hidden="true" />
         <Backdrop tone="light" gridWidth={48} />

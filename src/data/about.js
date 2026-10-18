@@ -68,7 +68,7 @@ export const TEAM = [
     name: 'Roberto Morallos',
     role: 'Founder, Market Stewards Trading Community',
     initials: 'RM',
-    photo: '/founder(1).jpg',
+    photo: '/Market-Stewards/founder(1).jpg',
     bio: 'Professional Forex Trader specializing in structured, risk-managed strategies, and Financial Advisor focused on investment guidance and risk management. Relationship Manager at Dupoin, a global CFD broker, with 2 years of experience working with a global CFD brokerage firm. Experienced in copy trading systems and trader development programs, and an advocate of capital preservation, discipline, and probability-based execution.',
   },
 ]
